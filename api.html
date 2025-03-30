@@ -1,0 +1,40 @@
+
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <style>
+        #map { height: 500px;
+            width: 500px; }
+    </style>
+</head>
+<body>
+    <div class="map" id="map"></div>
+<script>
+    var map = L.map("map").setView([{{ stations.0.AddressInfo.Latitude }}, {{ stations.0.AddressInfo.Longitude }}], 12);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
+    
+    {% for station in stations %}
+        L.marker([{{ station.AddressInfo.Latitude }}, {{ station.AddressInfo.Longitude }}])
+            .addTo(map)
+            .bindPopup("<b>{{ station.AddressInfo.Title }}</b><br>{{ station.AddressInfo.AddressLine1 }}");
+    {% endfor %}
+</script>
+
+<p id="status">Loading your location...</p>
+
+<script>
+    // Automatically get the location when the page loads
+    window.onload = function() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var lat = position.coords.latitude;
+                var lon = position.coords.longitude;
+                
+                // Display the coordinates on the page
+                document.getElementById("status").innerText = `Latitude: ${lat}, Longitude: ${lon}`;
+            });
+        }
+    };
+</script>
+</body>
